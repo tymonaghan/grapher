@@ -5,7 +5,7 @@
 class Button {
   int xSize, ySize, xPos, yPos, stringNum, buttonFunction;
   color bColor, tColor;
-  boolean buttonTicked = false;
+  boolean buttonTicked, drawSortedVersion;
 
   Button(int xPos_, int yPos_, int xSize_, int ySize_) {
     xPos = xPos_;
@@ -28,34 +28,59 @@ class Button {
     rect (xPos, yPos, xSize, ySize);
     fill (tColor);
     text(buttonText, xPos+10, yPos);
+    if (buttonTicked == true) //draw an X to tick the box when buttonTicked == true
+    {
+      textAlign(CENTER, CENTER);
+      text("X", xPos, yPos);
+    }//end if
   } // end display
 
-  boolean clickCheck () {
-    if (mousePressed == true && ticker > cooldown) {
-      if (mouseX > xPos-xSize/2 && mouseX < xPos+xSize/2 && mouseY > yPos-ySize/2 && mouseY < yPos +yPos/2) {
+  boolean clickCheck () 
+  {
+    if (mousePressed == true && ticker > cooldown) 
+    {
+      if (mouseX > xPos-xSize/2 && mouseX < xPos+xSize/2 && mouseY > yPos-ySize/2 && mouseY < yPos +yPos/2) 
+      {
         this.executeButton();
-        ticker = 0;
+        ticker = 0; //set ticker to 0 - prevents multiple clicks
         return true;
       }// end if mouse position check
     } // end if mousePressed
     return false;
   }//end clickCheck
 
-  void executeButton () {
-    println("Button clicked");
-    buttonTicked = !buttonTicked;
-    if (buttonTicked == true) {
-      text("X", xPos, yPos);
-    }//end if
+  boolean executeButton () //function for handling when buttons are clicked/toggled
+  {
+    displayRefresh();
+    println("Button clicked"); //debug -- print "button clicked" to console
+    buttonTicked = ! buttonTicked; //toggle the boolean buttonTicked
+    return buttonTicked;
   }//end executeButton
+
+  boolean getTicked() //function for checking if a button is toggled on or off
+  {
+    if (buttonTicked==true)
+    {
+      //println(buttonTicked);
+
+      return true;
+    } else 
+    {
+      println(buttonTicked);
+      return false;
+    }
+  } // end getTicked
 } //end Button class
 
+//=================END BUTTON CLASS===
+
+//=================BEGIN GRAPH CLASS===
 class Graph {
   int arraySize;
   float arrayMin, arrayMax;
   int xOrigin = 100;
   int yOrigin = height-150;
-  boolean sorted = false;
+  boolean drawSortedVersion;
 
   Graph(int arraySize_, float arrayMin_, float arrayMax_) {
     arraySize = arraySize_;
@@ -63,15 +88,28 @@ class Graph {
     arrayMax = arrayMax_;
   } //end graph constructor
 
-  void display(boolean sorted_) {
+  void display(boolean drawSortedVersion_) {
+    drawSortedVersion = drawSortedVersion_;
     rectMode(CORNER);
-    for (int i = 0; i < dataArray.length; i++) {
-      textAlign(LEFT);
-      fill (dataArray[i]*2.5, 100, 100); //color coding changes depending on value
-      rect (xOrigin, yOrigin-i*50-50, dataArray[i]*6, 20); //the colored bars
-      text (dataArray[i], xOrigin, yOrigin-i*50-50); //text labeling each bar with its value
-    }// end for loop
-    println(sorted);
+    if (!drawSortedVersion)
+    {
+      for (int i = 0; i < dataArray.length; i++) {
+        textAlign(LEFT);
+        fill (dataArray[i]*2.5, 100, 100); //color coding changes depending on value
+        rect (xOrigin, yOrigin-i*50-50, dataArray[i]*6, 20); //the colored bars
+        text (dataArray[i], xOrigin, yOrigin-i*50-50); //text labeling each bar with its value
+      }// end for loop
+    } else
+    {
+      float sortedArray[] = sort(dataArray); //function to order the data array
+      for (int i = 0; i < dataArray.length; i++) {
+
+        textAlign(LEFT);
+        fill (sortedArray[i]*2.5, 100, 100); //color coding changes depending on value
+        rect (xOrigin, yOrigin-i*50-50, sortedArray[i]*6, 20); //the colored bars
+        text (sortedArray[i], xOrigin, yOrigin-i*50-50); //text labeling each bar with its value
+      }
+    } //end else
   }//end graph.display
 
   void drawGraphLines() {

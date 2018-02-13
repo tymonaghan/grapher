@@ -10,3 +10,9 @@ void declareArray() {
  }// end for
  }// end manualPrintArray 
  */
+ 
+ void displayRefresh()
+ {
+   background(255);
+   mainGraph.drawGraphLines();
+ } //end displayRefresh function
